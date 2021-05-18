@@ -524,7 +524,7 @@ int main(void)
 	  }
 
 	  LCD_cursorXY(x,y);
-	  HAL_Delay(200);
+	  HAL_Delay(100);
 
 
 	  char totalDigits[3]={digit1[0],digit2[0],digit3[0]};
