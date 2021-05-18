@@ -1,0 +1,150 @@
+Configuration	Base200Tester
+STM32CubeMX 	6.2.1
+Date	05/14/2021
+MCU	STM32F746ZGTx
+
+
+
+PERIPHERALS	MODES	FUNCTIONS	PINS
+ADC1	IN3	ADC1_IN3	PA3
+I2C1	I2C	I2C1_SCL	PB8
+I2C1	I2C	I2C1_SDA	PB9
+SDMMC1	SD 1 bit	SDMMC1_CK	PC12
+SDMMC1	SD 1 bit	SDMMC1_CMD	PD2
+SDMMC1	SD 1 bit	SDMMC1_D0	PC8
+SPI1	Full-Duplex Master	SPI1_MISO	PA6
+SPI1	Full-Duplex Master	SPI1_MOSI	PA7
+SPI1	Full-Duplex Master	SPI1_SCK	PA5
+SPI5	Full-Duplex Master	SPI5_MISO	PF8
+SPI5	Full-Duplex Master	SPI5_MOSI	PF9
+SPI5	Full-Duplex Master	SPI5_SCK	PF7
+SYS	Trace Asynchronous Sw	SYS_JTMS-SWDIO	PA13
+SYS	Trace Asynchronous Sw	SYS_JTCK-SWCLK	PA14
+SYS	Trace Asynchronous Sw	SYS_JTDO-SWO	PB3
+SYS	SysTick	SYS_VS_Systick	VP_SYS_VS_Systick
+TIM1	Internal Clock	TIM1_VS_ClockSourceINT	VP_TIM1_VS_ClockSourceINT
+USART3	Asynchronous	USART3_RX	PD9
+USART3	Asynchronous	USART3_TX	PD8
+
+
+
+Pin Nb	PINs	FUNCTIONs	LABELs
+19	PF7	SPI5_SCK	
+20	PF8	SPI5_MISO	
+21	PF9	SPI5_MOSI	
+37	PA3	ADC1_IN3	
+41	PA5	SPI1_SCK	
+42	PA6	SPI1_MISO	
+43	PA7	SPI1_MOSI	
+54	PF14	GPIO_Output	SCL
+55	PF15	GPIO_Output	SDA
+57	PG1	GPIO_Input	MINUS
+63	PE10	GPIO_Output	EN_VBAT
+65	PE12	GPIO_Output	EN_SOLAR
+66	PE13	GPIO_Output	LCD_RST
+67	PE14	GPIO_Output	EN_VSWITCHED
+68	PE15	GPIO_Output	EN_VIN
+77	PD8	USART3_TX	
+78	PD9	USART3_RX	
+87	PG2	GPIO_Input	UP
+88	PG3	GPIO_Input	DOWN
+89	PG4	GPIO_Input	LEFT
+90	PG5	GPIO_Input	RIGHT
+92	PG7	GPIO_Input	PLUS
+93	PG8	GPIO_Input	TEST
+98	PC8	SDMMC1_D0	
+105	PA13	SYS_JTMS-SWDIO	
+109	PA14	SYS_JTCK-SWCLK	
+110	PA15*	SPI1_NSS	
+113	PC12	SDMMC1_CK	
+116	PD2	SDMMC1_CMD	
+124	PG9	GPIO_Output	RED
+125	PG10	GPIO_Output	GREEN
+133	PB3	SYS_JTDO-SWO	
+139	PB8	I2C1_SCL	
+140	PB9	I2C1_SDA	
+PERIPHERALS	MODES	FUNCTIONS	PINS
+ADC1	IN3	ADC1_IN3	PA3
+I2C1	I2C	I2C1_SCL	PB8
+I2C1	I2C	I2C1_SDA	PB9
+SDMMC1	SD 1 bit	SDMMC1_CK	PC12
+SDMMC1	SD 1 bit	SDMMC1_CMD	PD2
+SDMMC1	SD 1 bit	SDMMC1_D0	PC8
+SPI1	Full-Duplex Master	SPI1_MISO	PA6
+SPI1	Full-Duplex Master	SPI1_MOSI	PA7
+SPI1	Full-Duplex Master	SPI1_SCK	PA5
+SPI5	Full-Duplex Master	SPI5_MISO	PF8
+SPI5	Full-Duplex Master	SPI5_MOSI	PF9
+SPI5	Full-Duplex Master	SPI5_SCK	PF7
+SYS	Trace Asynchronous Sw	SYS_JTMS-SWDIO	PA13
+SYS	Trace Asynchronous Sw	SYS_JTCK-SWCLK	PA14
+SYS	Trace Asynchronous Sw	SYS_JTDO-SWO	PB3
+SYS	SysTick	SYS_VS_Systick	VP_SYS_VS_Systick
+TIM1	Internal Clock	TIM1_VS_ClockSourceINT	VP_TIM1_VS_ClockSourceINT
+USART3	Asynchronous	USART3_RX	PD9
+USART3	Asynchronous	USART3_TX	PD8
+
+
+
+Pin Nb	PINs	FUNCTIONs	LABELs
+19	PF7	SPI5_SCK	
+20	PF8	SPI5_MISO	
+21	PF9	SPI5_MOSI	
+37	PA3	ADC1_IN3	
+41	PA5	SPI1_SCK	
+42	PA6	SPI1_MISO	
+43	PA7	SPI1_MOSI	
+54	PF14	GPIO_Output	SCL
+55	PF15	GPIO_Output	SDA
+57	PG1	GPIO_Input	MINUS
+63	PE10	GPIO_Output	EN_VBAT
+65	PE12	GPIO_Output	EN_SOLAR
+66	PE13	GPIO_Output	LCD_RST
+67	PE14	GPIO_Output	EN_VSWITCHED
+68	PE15	GPIO_Output	EN_VIN
+77	PD8	USART3_TX	
+78	PD9	USART3_RX	
+87	PG2	GPIO_Input	UP
+88	PG3	GPIO_Input	DOWN
+89	PG4	GPIO_Input	LEFT
+90	PG5	GPIO_Input	RIGHT
+92	PG7	GPIO_Input	PLUS
+93	PG8	GPIO_Input	TEST
+98	PC8	SDMMC1_D0	
+105	PA13	SYS_JTMS-SWDIO	
+109	PA14	SYS_JTCK-SWCLK	
+110	PA15*	SPI1_NSS	
+113	PC12	SDMMC1_CK	
+116	PD2	SDMMC1_CMD	
+124	PG9	GPIO_Output	RED
+125	PG10	GPIO_Output	GREEN
+133	PB3	SYS_JTDO-SWO	
+139	PB8	I2C1_SCL	
+140	PB9	I2C1_SDA	
+
+
+
+SOFTWARE PROJECT
+
+Project Settings : 
+Project Name : Base200Tester
+Project Folder : G:\.shortcut-targets-by-id\0B2vcT7YIE7NvV0R0b0ZCRFRKNzg\Products\Testers\BST200\Base200Tester
+Toolchain / IDE : STM32CubeIDE
+Firmware Package Name and Version : STM32Cube FW_F7 V1.16.0
+
+
+Code Generation Settings : 
+STM32Cube MCU packages and embedded software packs : Copy only the necessary library files
+Generate peripheral initialization as a pair of '.c/.h' files per peripheral : Yes
+Backup previously generated files when re-generating : No
+Delete previously generated files when not re-generated : Yes
+Set all free pins as analog (to optimize the power consumption) : No
+
+
+Toolchains Settings : 
+Compiler Optimizations : 
+
+
+
+
+

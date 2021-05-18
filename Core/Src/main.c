@@ -19,8 +19,10 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "adc.h"
 #include "dma.h"
 #include "fatfs.h"
+#include "i2c.h"
 #include "sdmmc.h"
 #include "spi.h"
 #include "tim.h"
@@ -31,8 +33,10 @@
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 #include "lcd.h"
 #include "hexes.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -73,15 +77,167 @@ DWORD fre_clust;
 uint32_t total, free_space;
 #define BUFFER_SIZE 256
 char buffer[BUFFER_SIZE];  // to store strings..
+char digitID[10] = {'0','1','2','3','4','5','6','7','8','9'};
+uint8_t check= 0,z=0;
+typedef unsigned char * Word;
+Word digit1 =(Word) digitID;
+Word digit2 =(Word) digitID;
+Word digit3=(Word) digitID;
+char * Conf ="EU";
+char * mode ="Test&Program";
+
 int bufsize (char *buf)
 {
 	int i=0;
-	while (*buf++ != '\0') i++;
+	while (*(buf++) != '\0') i++;
 	return i;
 }
 void clear_buffer (void)
 {
 	for (int i=0; i<BUFFER_SIZE; i++) buffer[i] = '\0';
+}
+void Mode(){
+	if (x >=2 && y== 1){
+		char * modes[3]= {"Test&Program","ChangeConfig","ChangeID"};
+		if (z >2) z=0;
+		LCD_cursorXY(3,1);
+		LCD_digit((Word)modes[z],12);
+		mode= modes[z];
+		z++;
+
+	}
+}
+void SwitchRegion(){
+	if (x>=12 && x <=16 && y==0){
+	   char * region[2]={"US","EU"};
+		if(check >1) check=0;
+		LCD_cursorXY(12,0);
+		LCD_digit((Word)region[check],3);
+		Conf = region[check];
+		check++;
+	}
+}
+
+void addValue(){  //Increase each of three digits with the range from 0-9
+			  if ((x == 3) && y == 0){ // first digit in the index (3,0) of LCD
+				  uint8_t limitPlus = (uint8_t)*digit1 - '0';
+				  if (limitPlus < 10){
+					  if(limitPlus==9) digit1--;
+					  digit1++;
+					  LCD_digit(digit1,1);
+				  }
+				  HAL_Delay(100);
+			  }
+			  if ( x == 4  && y == 0){//Second digit in the index (4,0) of LCD
+							  uint8_t limitPlus = (uint8_t)*digit2 - '0';
+							  if (limitPlus < 10){
+								  if(limitPlus==9) digit2--;
+								  digit2++;
+								  LCD_digit(digit2,1);
+
+							  }
+							  HAL_Delay(100);
+				}
+			  if ( x== 5 && y == 0){//Last digit in the index (5,0) of LCD
+							  uint8_t limitPlus = (uint8_t)*digit3 - '0';
+							  if (limitPlus < 10){
+								  if(limitPlus==9) digit3--;
+								  digit3++;
+								  LCD_digit(digit3,1);
+
+							  }
+							  HAL_Delay(100);
+			  }
+  }
+void substractValue(){   //Decrease each of three digits with the range from 0-9
+	if (x == 3 && y == 0){
+		uint8_t limitSubtract =(uint8_t)*digit1 - '0'; // convert the character to number
+		 if (limitSubtract >= 0){
+		  if(limitSubtract == 0) digit1++;
+		  	  digit1--;
+		  	  LCD_digit(digit1,1);
+		 }
+		  HAL_Delay(100);
+	}
+	if ( x == 4 && y == 0){
+			uint8_t limitSubtract =(uint8_t)*digit2 - '0';
+			 if (limitSubtract >= 0){
+			  if(limitSubtract == 0) digit2++;
+			  	  digit2--;
+			  	  LCD_digit(digit2,1);
+			 }
+			  HAL_Delay(100);
+	}
+	if (x== 5 && y == 0){
+			uint8_t limitSubtract =(uint8_t)*digit3 - '0';
+			 if (limitSubtract >= 0){
+			  if(limitSubtract == 0) digit3++;
+			  	  digit3--;
+			  	  LCD_digit(digit3,1);
+			 }
+			  HAL_Delay(100);
+	}
+}
+//Print ADC signal
+void PrintADC(char * type){
+	typedef char * words;
+	uint16_t raw=0;
+	if (type == (words)"VIN" || type ==(words) "VBAT" || type ==(words)"VSOLAR"){
+		HAL_ADC_Start(&hadc1);
+		HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY);
+		raw = HAL_ADC_GetValue(&hadc1);
+		if (type == (words)"VBAT"){
+			raw= (2*raw);
+			if (raw > 3102){ //battery voltage is over 2.5V
+					HAL_GPIO_WritePin(GPIOE,EN_VIN_Pin,GPIO_PIN_SET);
+					HAL_Delay(1500);
+				}
+			 if (raw > 5087 && raw < 5336){
+					HAL_GPIO_WritePin(GPIOE,EN_VIN_Pin,GPIO_PIN_RESET);
+					HAL_Delay(1500);
+			}
+		}
+	}
+	else if (type ==(words) "A1V8"){
+		HAL_ADC_Start(&hadc3);
+		HAL_ADC_PollForConversion(&hadc3, HAL_MAX_DELAY);
+		raw = HAL_ADC_GetValue(&hadc3);
+		if (raw >2358 && raw < 2730){
+			HAL_GPIO_WritePin(GPIOE,EN_VSWITCHED_Pin,GPIO_PIN_RESET);
+			HAL_Delay(3000);
+		}
+	}
+	myprintf ("%d ",raw);
+}
+/* Testing power management */
+//Testing Voltage Input
+void Testing_VIN(){
+
+	HAL_GPIO_WritePin(GPIOE,EN_VIN_Pin,GPIO_PIN_SET);
+	HAL_Delay(2000);
+	PrintADC("VIN");
+	HAL_GPIO_WritePin(GPIOE,EN_VIN_Pin,GPIO_PIN_RESET);
+}
+//Testing Solar analog
+void Testing_VSOLAR(){
+
+	HAL_GPIO_WritePin(GPIOE,EN_SOLAR_Pin,GPIO_PIN_SET);
+	HAL_Delay(1500);
+	PrintADC("VSOLAR");
+	HAL_GPIO_WritePin(GPIOE,EN_SOLAR_Pin,GPIO_PIN_RESET);
+}
+//Testing Battery
+void Testing_VBAT(){
+	HAL_GPIO_WritePin(GPIOE,EN_VIN_Pin,GPIO_PIN_SET);
+	HAL_Delay(1500);
+	HAL_GPIO_WritePin(GPIOE,EN_VBAT_Pin,GPIO_PIN_SET);
+	PrintADC("VBAT");
+}
+//Testing Switch
+void Testing_Switch(){
+	HAL_GPIO_WritePin(GPIOE,EN_VSWITCHED_Pin,GPIO_PIN_SET);
+	HAL_Delay(3000);
+	PrintADC("A1V8");
 }
 /* USER CODE END 0 */
 
@@ -119,6 +275,10 @@ int main(void)
   MX_TIM1_Init();
   MX_USART3_UART_Init();
   MX_SPI5_Init();
+  MX_ADC1_Init();
+  MX_SPI1_Init();
+  MX_I2C1_Init();
+  MX_ADC3_Init();
   /* USER CODE BEGIN 2 */
   HAL_TIM_Base_Start(&htim1);
   LL_GPIO_ResetOutputPin(LCD_RST_GPIO_Port, LCD_RST_Pin);
@@ -127,6 +287,8 @@ int main(void)
   HAL_Delay(100);
   init_LCD();
   myprintf ("\r\n\r\nzzzzzzzzzzzzzzzzzzzzzzzzzzzz\r\nBST200 Tester\r\n");
+
+
 
 #ifdef SD_SELFTEST
   LCD_Clear();
@@ -319,19 +481,22 @@ int main(void)
 //    LL_GPIO_ResetOutputPin(EN_SD_GPIO_Port, EN_SD_Pin);
 //    HAL_Delay(1);
 #endif
-   if(!ReadFile()) myprintf("ReadFile complete\r\n");
+  // if(!ReadFile() ) myprintf("ReadFile complete\r\n");
 
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+
   while (1)
   {
 	  buttons=GetButtons();
 	  switch(buttons)
 	  {
 	  	    case 1:		//Minus
-	  	    	LL_GPIO_SetOutputPin(GREEN_GPIO_Port, GREEN_Pin);
+	  	    	substractValue();
+	  	    	Mode();
+	  	    	//LL_GPIO_SetOutputPin(GREEN_GPIO_Port, GREEN_Pin);
 	  	    	break;
 	  		case 2:		//Up
 	  			y=0;
@@ -348,6 +513,8 @@ int main(void)
 	  			else x=15;
 	  			break;
 	  		case 32:	//Plus
+	  			addValue();
+	  			SwitchRegion();
 	  			LL_GPIO_ResetOutputPin(GREEN_GPIO_Port, GREEN_Pin);
 	  			break;
 	  		case 64:	//Test
@@ -355,8 +522,33 @@ int main(void)
 	  		default:
 	  			break;
 	  }
+
 	  LCD_cursorXY(x,y);
 	  HAL_Delay(200);
+
+
+	  char totalDigits[3]={digit1[0],digit2[0],digit3[0]};
+
+	  if (buttons == 64){
+
+		 totalDigits[0]=digit1[6];
+		 totalDigits[1]=digit2[6];
+		 totalDigits[2]=digit3[6];
+
+		 LCD_cursorXY(3,0);
+		 LCD_digit((Word)totalDigits,3);
+		 LCD_cursorXY(12,0);
+		 LCD_digit((Word)Conf,2);
+		 LCD_cursorXY(3,1);
+		 LCD_write((Word)mode);
+		 x=3,y=0;
+		 HAL_Delay(200);
+	  }
+
+	 // Testing_VIN();
+	 // Testing_VSOLAR();
+	  // Testing_VBAT();
+	 // Testing_Switch();
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -413,6 +605,7 @@ void SystemClock_Config(void)
   LL_RCC_SetCK48MClockSource(LL_RCC_CK48M_CLKSOURCE_PLL);
   LL_RCC_SetSDMMCClockSource(LL_RCC_SDMMC1_CLKSOURCE_PLL48CLK);
   LL_RCC_SetUSARTClockSource(LL_RCC_USART3_CLKSOURCE_PCLK1);
+  LL_RCC_SetI2CClockSource(LL_RCC_I2C1_CLKSOURCE_PCLK1);
 }
 
 /* USER CODE BEGIN 4 */
