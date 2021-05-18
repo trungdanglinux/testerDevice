@@ -8,6 +8,8 @@
 #include "main.h"
 #include "gpio.h"
 
+ unsigned char scoutIDs[10] ="ID:";
+    unsigned char scoutRegion[10] ="Conf:";
 
 
 void I2C_out(unsigned char d) //I2C Output
@@ -78,6 +80,18 @@ void LCD_write(unsigned char *text)
 	I2C_Stop();
 }
 
+void LCD_digit(unsigned char *digit, uint8_t counter){
+	I2C_Start();
+	I2C_out(0x7C);	//LCD address
+		I2C_out(0x40);	//data stream up next
+		delay_us(40);
+		for(int i=0;i<counter;i++){
+			I2C_out(digit[i]);
+			delay_us(40);
+		}
+
+		I2C_Stop();
+}
 void LCD_Clear()
 {
 	I2C_Start();
@@ -111,6 +125,16 @@ void LCD_cursorXY(uint8_t x, uint8_t y)
 	delay_us(40);
 	I2C_Stop();
 }
+void set_structure(){
+		LCD_Clear();
+		LCD_cursorXY(0,0);
+		LCD_digit(scoutIDs,4);
+		LCD_cursorXY(7,0);
+		LCD_digit(scoutRegion,6);
+		LCD_cursorXY(0,1);
+		LCD_digit((unsigned char *)"M:",2);
+
+}
 
 void init_LCD()
 {
@@ -137,6 +161,9 @@ void init_LCD()
 	HAL_Delay(2);
 	I2C_Stop();
 	HAL_Delay(100);
-	unsigned char TEXT[16]="ABCDEFGHIJKLMNOP";
+	unsigned char TEXT[16]="Let's Testing!";
 	LCD_write(TEXT);
+	HAL_Delay(1000);
+    LCD_Clear();
+    set_structure();
 }

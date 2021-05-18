@@ -149,7 +149,7 @@ uint8_t ProcessLines()
 				myprintf("Write error on line #%d",LineNr);
 				return 2;
 			}
-			res=VerifyLine(InputBuffer);
+			res=VerifyLine((char *)InputBuffer);
 			if(res)
 			{
 				myprintf("Verify error on line #%d",LineNr);
@@ -168,7 +168,7 @@ uint8_t ReadLine(uint16_t line, char *hexes)		//line is only passed to keep trac
 	char buffer[MAXLINE];
 	char asciipair[3];
 	uint8_t bytecount;
-	uint16_t address;
+	//uint16_t address;
 	uint8_t type;
 	uint8_t CRCsum=0;
 
@@ -201,7 +201,7 @@ uint8_t ReadLine(uint16_t line, char *hexes)		//line is only passed to keep trac
 #ifdef HEXDEBUG myprintf(" %02x.\r\n",hexes[bytecount+4]);
 #endif
 
-  	address=hexes[1]<<16+hexes[2];
+  	char *address=hexes[1]<<16+hexes[2];
   	type=hexes[3];
   	CRCsum=~CRCsum+1;
   	if(CRCsum!=hexes[bytecount+4])
@@ -216,7 +216,7 @@ uint8_t ReadLine(uint16_t line, char *hexes)		//line is only passed to keep trac
 #endif
 
   	if(type==1) return 200;									//end of file
-  	else if(type==4) ExtAdd=hexes[4]<<8+hexes[5];			//Set extended address
+  	else if(type==4) ExtAdd=(hexes[4]<<8)+hexes[5];			//Set extended address
   	else if(type==0) ;										//Actual data
   	return 0;											    //others types are cast into oblivion (Ext Segment Address, Start Seg Add, Start Linear Add)
 }
@@ -266,7 +266,7 @@ uint8_t VerifyLine(char *hexes)
 {
 	uint8_t response=0;
 	uint8_t checksum=0;
-	uint8_t readBack[MAXLINE>>2)+5]
+	uint8_t readBack[(MAXLINE>>2)+5];
 
 	SPI_Transfer(0x5A);	//Start
 	SPI_Transfer(0x11); //Write Memory
@@ -292,7 +292,7 @@ uint8_t VerifyLine(char *hexes)
 	for(uint8_t i=0;i<hexes[0];i++)
 	{
 		readBack[i]=SPI_Transfer(0xFF);	//getting data
-		if(readBack[i]!=hexes[4+i] return 3;		//verify error
+		if(readBack[i]!=hexes[4+i]) return 3;		//verify error
 	}
 
 	return 0;
