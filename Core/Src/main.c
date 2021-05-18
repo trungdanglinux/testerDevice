@@ -542,7 +542,7 @@ int main(void)
 		 LCD_cursorXY(3,1);
 		 LCD_write((Word)mode);
 		 x=3,y=0;
-		 HAL_Delay(200);
+		 HAL_Delay(400);
 	  }
 
 	 // Testing_VIN();
