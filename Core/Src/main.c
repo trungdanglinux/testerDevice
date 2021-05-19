@@ -198,11 +198,11 @@ void PrintADC(char * type){
 			}
 		}
 	}
-	else if (type ==(words) "A1V8"){
+	else if (type == (words)"A1V8" || type == (words)"AN_3V3"){
 		HAL_ADC_Start(&hadc3);
 		HAL_ADC_PollForConversion(&hadc3, HAL_MAX_DELAY);
 		raw = HAL_ADC_GetValue(&hadc3);
-		if (raw >2358 && raw < 2730){
+		if (type == (words)"A1V8" && raw > 2358 && raw < 2730){
 			HAL_GPIO_WritePin(GPIOE,EN_VSWITCHED_Pin,GPIO_PIN_RESET);
 			HAL_Delay(3000);
 		}
@@ -238,6 +238,9 @@ void Testing_Switch(){
 	HAL_GPIO_WritePin(GPIOE,EN_VSWITCHED_Pin,GPIO_PIN_SET);
 	HAL_Delay(3000);
 	PrintADC("A1V8");
+}
+void Testing_3V3(){
+	PrintADC("AN_3V3");
 }
 /* USER CODE END 0 */
 
@@ -544,7 +547,7 @@ int main(void)
 		 x=3,y=0;
 		 HAL_Delay(400);
 	  }
-
+	  Testing_3V3();
 	 // Testing_VIN();
 	 // Testing_VSOLAR();
 	  // Testing_VBAT();

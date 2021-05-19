@@ -70,6 +70,8 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 #define AN_1V8_Pin GPIO_PIN_3
 #define AN_1V8_GPIO_Port GPIOF
+#define AN_3V3_Pin GPIO_PIN_5
+#define AN_3V3_GPIO_Port GPIOF
 #define VBAT_Pin GPIO_PIN_0
 #define VBAT_GPIO_Port GPIOC
 #define VSOLAR_Pin GPIO_PIN_3
@@ -78,6 +80,8 @@ void Error_Handler(void);
 #define VIN_GPIO_Port GPIOA
 #define SDA_Pin GPIO_PIN_15
 #define SDA_GPIO_Port GPIOF
+#define SCL_Pin GPIO_PIN_14
+#define SCL_GPIO_Port GPIOF
 #define EN_VBAT_Pin GPIO_PIN_10
 #define EN_VBAT_GPIO_Port GPIOE
 #define EN_SOLAR_Pin GPIO_PIN_12
@@ -104,8 +108,6 @@ void Error_Handler(void);
 #define RED_GPIO_Port GPIOG
 #define GREEN_Pin GPIO_PIN_10
 #define GREEN_GPIO_Port GPIOG
-#define SCL_Pin GPIO_PIN_14
-#define SCL_GPIO_Port GPIOF
 /* USER CODE BEGIN Private defines */
 //#define SD_SELFTEST
 /* USER CODE END Private defines */
