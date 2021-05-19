@@ -72,16 +72,14 @@ void Error_Handler(void);
 #define AN_1V8_GPIO_Port GPIOF
 #define AN_3V3_Pin GPIO_PIN_5
 #define AN_3V3_GPIO_Port GPIOF
-#define VBAT_Pin GPIO_PIN_0
-#define VBAT_GPIO_Port GPIOC
-#define VSOLAR_Pin GPIO_PIN_3
-#define VSOLAR_GPIO_Port GPIOC
-#define VIN_Pin GPIO_PIN_3
-#define VIN_GPIO_Port GPIOA
+#define GREEN_Pin GPIO_PIN_0
+#define GREEN_GPIO_Port GPIOC
+#define MINUS_Pin GPIO_PIN_3
+#define MINUS_GPIO_Port GPIOC
+#define RED_Pin GPIO_PIN_3
+#define RED_GPIO_Port GPIOA
 #define SDA_Pin GPIO_PIN_15
 #define SDA_GPIO_Port GPIOF
-#define SCL_Pin GPIO_PIN_14
-#define SCL_GPIO_Port GPIOF
 #define EN_VBAT_Pin GPIO_PIN_10
 #define EN_VBAT_GPIO_Port GPIOE
 #define EN_SOLAR_Pin GPIO_PIN_12
@@ -96,18 +94,14 @@ void Error_Handler(void);
 #define UP_GPIO_Port GPIOG
 #define DOWN_Pin GPIO_PIN_3
 #define DOWN_GPIO_Port GPIOG
-#define LEFT_Pin GPIO_PIN_4
-#define LEFT_GPIO_Port GPIOG
-#define RIGHT_Pin GPIO_PIN_5
-#define RIGHT_GPIO_Port GPIOG
-#define PLUS_Pin GPIO_PIN_7
-#define PLUS_GPIO_Port GPIOG
-#define TEST_Pin GPIO_PIN_8
-#define TEST_GPIO_Port GPIOG
-#define RED_Pin GPIO_PIN_9
-#define RED_GPIO_Port GPIOG
-#define GREEN_Pin GPIO_PIN_10
-#define GREEN_GPIO_Port GPIOG
+#define TEST_Pin GPIO_PIN_4
+#define TEST_GPIO_Port GPIOD
+#define PLUS_Pin GPIO_PIN_5
+#define PLUS_GPIO_Port GPIOD
+#define RIGHT_Pin GPIO_PIN_6
+#define RIGHT_GPIO_Port GPIOD
+#define LEFT_Pin GPIO_PIN_7
+#define LEFT_GPIO_Port GPIOD
 /* USER CODE BEGIN Private defines */
 //#define SD_SELFTEST
 /* USER CODE END Private defines */
