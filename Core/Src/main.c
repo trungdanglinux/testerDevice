@@ -183,9 +183,9 @@ void PrintADC(char * type){
 	typedef char * words;
 	uint16_t raw=0;
 	if (type == (words)"VIN" || type ==(words) "VBAT" || type ==(words)"VSOLAR"){
-		HAL_ADC_Start(&hadc1);
-		HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY);
-		raw = HAL_ADC_GetValue(&hadc1);
+		HAL_ADC_Start(&hadc3);
+		HAL_ADC_PollForConversion(&hadc3, HAL_MAX_DELAY);
+		raw = HAL_ADC_GetValue(&hadc3);
 		if (type == (words)"VBAT"){
 			raw= (2*raw);
 			if (raw > 3102){ //battery voltage is over 2.5V
@@ -276,11 +276,11 @@ int main(void)
   MX_SDMMC1_SD_Init();
   MX_FATFS_Init();
   MX_TIM1_Init();
-  MX_USART3_UART_Init();
   MX_SPI5_Init();
-  MX_SPI1_Init();
   MX_I2C1_Init();
   MX_ADC3_Init();
+  MX_ADC1_Init();
+  MX_USART6_UART_Init();
   /* USER CODE BEGIN 2 */
   HAL_TIM_Base_Start(&htim1);
   LL_GPIO_ResetOutputPin(LCD_RST_GPIO_Port, LCD_RST_Pin);
@@ -606,7 +606,7 @@ void SystemClock_Config(void)
   }
   LL_RCC_SetCK48MClockSource(LL_RCC_CK48M_CLKSOURCE_PLL);
   LL_RCC_SetSDMMCClockSource(LL_RCC_SDMMC1_CLKSOURCE_PLL48CLK);
-  LL_RCC_SetUSARTClockSource(LL_RCC_USART3_CLKSOURCE_PCLK1);
+  LL_RCC_SetUSARTClockSource(LL_RCC_USART6_CLKSOURCE_PCLK2);
   LL_RCC_SetI2CClockSource(LL_RCC_I2C1_CLKSOURCE_PCLK1);
 }
 
