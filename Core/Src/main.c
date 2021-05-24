@@ -281,6 +281,7 @@ int main(void)
   MX_ADC3_Init();
   MX_ADC1_Init();
   MX_USART6_UART_Init();
+  MX_USART3_UART_Init();
   /* USER CODE BEGIN 2 */
   HAL_TIM_Base_Start(&htim1);
   LL_GPIO_ResetOutputPin(LCD_RST_GPIO_Port, LCD_RST_Pin);
@@ -495,43 +496,43 @@ int main(void)
 	  buttons=GetButtons();
 	  switch(buttons)
 	  {
-	  	    case 1:		//Minus
+	  	    case 99:		//Minus
 	  	    	substractValue();
 	  	    	Mode();
 	  	    	//LL_GPIO_SetOutputPin(GREEN_GPIO_Port, GREEN_Pin);
 	  	    	break;
-	  		case 2:		//Up
+	  		case 124:		//Up
 	  			y=0;
 	  			break;
-	  		case 4:		//Down
+	  		case 122:		//Down
 	  			y=1;
 	  			break;
-	  		case 8:		//Left
+	  		case 95:		//Left
 	  			if(x) x--;
 	  			else x=0;
 	  			break;
-	  		case 16:	//Right
+	  		case 127:	//Right
 	  			if(x<14) x++;
 	  			else x=15;
 	  			break;
-	  		case 32:	//Plus
+	  		case 111:	//Plus
 	  			addValue();
 	  			SwitchRegion();
 	  			LL_GPIO_ResetOutputPin(GREEN_GPIO_Port, GREEN_Pin);
 	  			break;
-	  		case 64:	//Test
+	  		case 119:	//Test
 	  			break;
 	  		default:
 	  			break;
 	  }
 
 	  LCD_cursorXY(x,y);
-	  HAL_Delay(100);
+	  HAL_Delay(300);
 
 
 	  char totalDigits[3]={digit1[0],digit2[0],digit3[0]};
 
-	  if (buttons == 64){
+	  if (buttons == 119){
 
 		 totalDigits[0]=digit1[6];
 		 totalDigits[1]=digit2[6];
@@ -546,7 +547,9 @@ int main(void)
 		 x=3,y=0;
 		 HAL_Delay(400);
 	  }
-	  Testing_3V3();
+
+
+	  //Testing_3V3();
 	 // Testing_VIN();
 	 // Testing_VSOLAR();
 	  // Testing_VBAT();
@@ -606,6 +609,7 @@ void SystemClock_Config(void)
   }
   LL_RCC_SetCK48MClockSource(LL_RCC_CK48M_CLKSOURCE_PLL);
   LL_RCC_SetSDMMCClockSource(LL_RCC_SDMMC1_CLKSOURCE_PLL48CLK);
+  LL_RCC_SetUSARTClockSource(LL_RCC_USART3_CLKSOURCE_PCLK1);
   LL_RCC_SetUSARTClockSource(LL_RCC_USART6_CLKSOURCE_PCLK2);
   LL_RCC_SetI2CClockSource(LL_RCC_I2C1_CLKSOURCE_PCLK1);
 }
@@ -615,10 +619,19 @@ void SystemClock_Config(void)
 
 uint8_t GetButtons()
 {
-	uint16_t value=LL_GPIO_ReadInputPort(GPIOG);	//G2...G8 are buttons Up-Down-Left-Right-Plus-Minus-Test
-	value=~value;									//invert so that button pressed = 1
-	value=(((value>>2)&0x60) | ((value>>1)&0x1F));	//drop unnecessary bits and rearrange to a row 8,7,5..1
-	return (uint8_t) value;							//only return 8 bits, that's enough
+	uint16_t value;
+    // buttons Up-Down-Left-Right-Plus-Minus-Test
+	if (MINUS) value=LL_GPIO_ReadInputPort(MINUS_GPIO_Port);
+	if (PLUS) value=LL_GPIO_ReadInputPort(PLUS_GPIO_Port);
+	if (UP) value=LL_GPIO_ReadInputPort(UP_GPIO_Port);
+	if (DOWN) value=LL_GPIO_ReadInputPort(DOWN_GPIO_Port);
+	if (RIGHT) value=LL_GPIO_ReadInputPort(RIGHT_GPIO_Port);
+	if (LEFT) value=LL_GPIO_ReadInputPort(LEFT_GPIO_Port);
+	if (TEST) value=LL_GPIO_ReadInputPort(TEST_GPIO_Port);
+
+	value=(((value>>2)&0x60) | ((value>>1)&0x1F));//drop unnecessary bits and rearrange to a row 8,7,5..1
+	myprintf (":%d:",value);
+	return (uint8_t) value;	//only return 8 bits, that's enough
 }
 /* USER CODE END 4 */
 

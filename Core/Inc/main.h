@@ -88,6 +88,8 @@ void Error_Handler(void);
 #define AN_RF_GPIO_Port GPIOA
 #define EN_VSWITCHED_Pin GPIO_PIN_12
 #define EN_VSWITCHED_GPIO_Port GPIOF
+#define SCL_Pin GPIO_PIN_14
+#define SCL_GPIO_Port GPIOF
 #define SDA_Pin GPIO_PIN_15
 #define SDA_GPIO_Port GPIOF
 #define CS_DUT_Pin GPIO_PIN_1
@@ -134,12 +136,19 @@ void Error_Handler(void);
 #define EN_VBATB4_GPIO_Port GPIOB
 #define EN_VSOLAR_Pin GPIO_PIN_5
 #define EN_VSOLAR_GPIO_Port GPIOB
-#define SCL_Pin GPIO_PIN_8
-#define SCL_GPIO_Port GPIOB
-#define SDAB9_Pin GPIO_PIN_9
-#define SDAB9_GPIO_Port GPIOB
+#define SCL_DUT_Pin GPIO_PIN_8
+#define SCL_DUT_GPIO_Port GPIOB
+#define SDA_DUT_Pin GPIO_PIN_9
+#define SDA_DUT_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
 //#define SD_SELFTEST
+#define MINUS (!LL_GPIO_IsInputPinSet(MINUS_GPIO_Port,MINUS_Pin))
+#define PLUS (!LL_GPIO_IsInputPinSet(PLUS_GPIO_Port,PLUS_Pin))
+#define RIGHT (!LL_GPIO_IsInputPinSet(RIGHT_GPIO_Port,RIGHT_Pin))
+#define LEFT (!LL_GPIO_IsInputPinSet(LEFT_GPIO_Port,LEFT_Pin))
+#define UP (!LL_GPIO_IsInputPinSet(UP_GPIO_Port,UP_Pin))
+#define DOWN (!LL_GPIO_IsInputPinSet(DOWN_GPIO_Port,DOWN_Pin))
+#define TEST (!LL_GPIO_IsInputPinSet(TEST_GPIO_Port,TEST_Pin))
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus
