@@ -51,7 +51,7 @@ void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GREEN_GPIO_Port, GREEN_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, RED_Pin|EN_3V3A15_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(RED_GPIO_Port, RED_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOF, EN_VSWITCHED_Pin|SCL_Pin|SDA_Pin, GPIO_PIN_RESET);
@@ -60,14 +60,11 @@ void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(CS_DUT_GPIO_Port, CS_DUT_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOE, EN_VBAT_Pin|EN_SOLAR_Pin|EN_VSWITCHEDE14_Pin|EN_VIN_Pin, GPIO_PIN_RESET);
-
-  /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(LCD_RST_GPIO_Port, LCD_RST_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, PULL_WP_Pin|PULL_RST_Pin|EN_BOOTS_Pin|EN_VINB3_Pin
-                          |EN_VBATB4_Pin|EN_VSOLAR_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, PULL_WP_Pin|PULL_RST_Pin|EN_BOOTS_Pin|EN_VIN_Pin
+                          |EN_VBAT_Pin|EN_VSOLAR_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(EN_3V3_GPIO_Port, EN_3V3_Pin, GPIO_PIN_RESET);
@@ -88,7 +85,7 @@ void MX_GPIO_Init(void)
   /*Configure GPIO pin : PtPin */
   GPIO_InitStruct.Pin = RED_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(RED_GPIO_Port, &GPIO_InitStruct);
 
@@ -113,19 +110,17 @@ void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(CS_DUT_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PEPin PEPin PEPin PEPin
-                           PEPin */
-  GPIO_InitStruct.Pin = EN_VBAT_Pin|EN_SOLAR_Pin|LCD_RST_Pin|EN_VSWITCHEDE14_Pin
-                          |EN_VIN_Pin;
+  /*Configure GPIO pin : PtPin */
+  GPIO_InitStruct.Pin = LCD_RST_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
+  HAL_GPIO_Init(LCD_RST_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : PBPin PBPin PBPin PBPin
                            PBPin PBPin */
-  GPIO_InitStruct.Pin = PULL_WP_Pin|PULL_RST_Pin|EN_BOOTS_Pin|EN_VINB3_Pin
-                          |EN_VBATB4_Pin|EN_VSOLAR_Pin;
+  GPIO_InitStruct.Pin = PULL_WP_Pin|PULL_RST_Pin|EN_BOOTS_Pin|EN_VIN_Pin
+                          |EN_VBAT_Pin|EN_VSOLAR_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -143,13 +138,6 @@ void MX_GPIO_Init(void)
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(GPIOG, &GPIO_InitStruct);
-
-  /*Configure GPIO pin : PtPin */
-  GPIO_InitStruct.Pin = EN_3V3A15_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(EN_3V3A15_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : PDPin PDPin PDPin */
   GPIO_InitStruct.Pin = TEST_Pin|PLUS_Pin|RIGHT_Pin;

@@ -85,7 +85,7 @@ Word digit2 =(Word) digitID;
 Word digit3=(Word) digitID;
 char * Conf ="EU";
 char * mode ="Test&Program";
-
+uint16_t raw=0;
 int bufsize (char *buf)
 {
 	int i=0;
@@ -181,22 +181,21 @@ void substractValue(){   //Decrease each of three digits with the range from 0-9
 //Print ADC signal
 void PrintADC(char * type){
 	typedef char * words;
-	uint16_t raw=0;
+	uint8_t raw=0;
 	if (type == (words)"VIN" || type ==(words) "VBAT" || type ==(words)"VSOLAR"){
-		HAL_ADC_Start(&hadc3);
-		HAL_ADC_PollForConversion(&hadc3, HAL_MAX_DELAY);
-		raw = HAL_ADC_GetValue(&hadc3);
+		raw= adc_readChannel(ADC_CHANNEL_4,hadc1);
 		if (type == (words)"VBAT"){
-			raw= (2*raw);
+				raw= 2*raw;
 			if (raw > 3102){ //battery voltage is over 2.5V
-					HAL_GPIO_WritePin(GPIOE,EN_VIN_Pin,GPIO_PIN_SET);
+					HAL_GPIO_WritePin(EN_VIN_GPIO_Port,EN_VIN_Pin,GPIO_PIN_SET);
 					HAL_Delay(1500);
 				}
 			 if (raw > 5087 && raw < 5336){
-					HAL_GPIO_WritePin(GPIOE,EN_VIN_Pin,GPIO_PIN_RESET);
+					HAL_GPIO_WritePin(EN_VIN_GPIO_Port,EN_VIN_Pin,GPIO_PIN_RESET);
 					HAL_Delay(1500);
 			}
 		}
+
 	}
 	else if (type == (words)"A1V8" || type == (words)"AN_3V3"){
 		HAL_ADC_Start(&hadc3);
@@ -207,40 +206,50 @@ void PrintADC(char * type){
 			HAL_Delay(3000);
 		}
 	}
-	myprintf ("%d ",raw);
+	myprintf("%d ",raw);
 }
 /* Testing power management */
 //Testing Voltage Input
-void Testing_VIN(){
 
-	HAL_GPIO_WritePin(GPIOE,EN_VIN_Pin,GPIO_PIN_SET);
+void Testing_VIN(){
+	LL_GPIO_SetOutputPin(EN_VIN_GPIO_Port, EN_VIN_Pin);
 	HAL_Delay(2000);
-	PrintADC("VIN");
-	HAL_GPIO_WritePin(GPIOE,EN_VIN_Pin,GPIO_PIN_RESET);
+	raw= GetValue_24V();
+	myprintf("%d ",raw);
+	if (raw <= 2395) myprintf("Short in DC input");
+	LL_GPIO_ResetOutputPin(EN_VIN_GPIO_Port, EN_VIN_Pin);
 }
 //Testing Solar analog
 void Testing_VSOLAR(){
-
-	HAL_GPIO_WritePin(GPIOE,EN_SOLAR_Pin,GPIO_PIN_SET);
-	HAL_Delay(1500);
-	PrintADC("VSOLAR");
-	HAL_GPIO_WritePin(GPIOE,EN_SOLAR_Pin,GPIO_PIN_RESET);
+	LL_GPIO_SetOutputPin(EN_VSOLAR_GPIO_Port, EN_VSOLAR_Pin);
+	HAL_Delay(3000);
+	raw= GetValue_24V();
+	myprintf("%d ",raw);
+	if (raw <= 2395) myprintf("Short in Solar input");
+	LL_GPIO_ResetOutputPin(EN_VSOLAR_GPIO_Port, EN_VSOLAR_Pin);
 }
 //Testing Battery
 void Testing_VBAT(){
-	HAL_GPIO_WritePin(GPIOE,EN_VIN_Pin,GPIO_PIN_SET);
+	LL_GPIO_SetOutputPin(EN_VIN_GPIO_Port, EN_VIN_Pin);
 	HAL_Delay(1500);
-	HAL_GPIO_WritePin(GPIOE,EN_VBAT_Pin,GPIO_PIN_SET);
-	PrintADC("VBAT");
+    raw = GetValue_VBAT();
+    raw *= 2;
+	myprintf("%d ",raw);
+	if (raw > 3102 ){//battery voltage is over 2.5V
+		LL_GPIO_SetOutputPin(EN_VIN_GPIO_Port, EN_VIN_Pin);
+		HAL_Delay(1500);
+	}else if (raw > 5087 && raw < 5336){ //battery voltage is from 4.1 -4.3V
+		LL_GPIO_ResetOutputPin(EN_VIN_GPIO_Port, EN_VIN_Pin);
+	}
 }
 //Testing Switch
 void Testing_Switch(){
 	HAL_GPIO_WritePin(GPIOE,EN_VSWITCHED_Pin,GPIO_PIN_SET);
 	HAL_Delay(3000);
-	PrintADC("A1V8");
+
 }
 void Testing_3V3(){
-	PrintADC("AN_3V3");
+
 }
 /* USER CODE END 0 */
 
@@ -499,7 +508,7 @@ int main(void)
 	  	    case 99:		//Minus
 	  	    	substractValue();
 	  	    	Mode();
-	  	    	//LL_GPIO_SetOutputPin(GREEN_GPIO_Port, GREEN_Pin);
+	  	    	LL_GPIO_SetOutputPin(GREEN_GPIO_Port, GREEN_Pin);
 	  	    	break;
 	  		case 124:		//Up
 	  			y=0;
@@ -507,20 +516,20 @@ int main(void)
 	  		case 122:		//Down
 	  			y=1;
 	  			break;
-	  		case 95:		//Left
+	  		case 94:		//Left
 	  			if(x) x--;
 	  			else x=0;
 	  			break;
-	  		case 127:	//Right
+	  		case 126:	//Right
 	  			if(x<14) x++;
 	  			else x=15;
 	  			break;
-	  		case 111:	//Plus
+	  		case 110:	//Plus
 	  			addValue();
 	  			SwitchRegion();
 	  			LL_GPIO_ResetOutputPin(GREEN_GPIO_Port, GREEN_Pin);
 	  			break;
-	  		case 119:	//Test
+	  		case 118:	//Test
 	  			break;
 	  		default:
 	  			break;
@@ -532,7 +541,7 @@ int main(void)
 
 	  char totalDigits[3]={digit1[0],digit2[0],digit3[0]};
 
-	  if (buttons == 119){
+	  if (buttons == 118){
 
 		 totalDigits[0]=digit1[6];
 		 totalDigits[1]=digit2[6];
@@ -549,10 +558,10 @@ int main(void)
 	  }
 
 
-	  //Testing_3V3();
-	 // Testing_VIN();
-	 // Testing_VSOLAR();
-	  // Testing_VBAT();
+//	  Testing_3V3();
+//	  Testing_VIN();
+	  Testing_VSOLAR();
+//	   Testing_VBAT();
 	 // Testing_Switch();
     /* USER CODE END WHILE */
 
@@ -621,16 +630,16 @@ uint8_t GetButtons()
 {
 	uint16_t value;
     // buttons Up-Down-Left-Right-Plus-Minus-Test
-	if (MINUS) value=LL_GPIO_ReadInputPort(MINUS_GPIO_Port);
-	if (PLUS) value=LL_GPIO_ReadInputPort(PLUS_GPIO_Port);
-	if (UP) value=LL_GPIO_ReadInputPort(UP_GPIO_Port);
-	if (DOWN) value=LL_GPIO_ReadInputPort(DOWN_GPIO_Port);
-	if (RIGHT) value=LL_GPIO_ReadInputPort(RIGHT_GPIO_Port);
-	if (LEFT) value=LL_GPIO_ReadInputPort(LEFT_GPIO_Port);
-	if (TEST) value=LL_GPIO_ReadInputPort(TEST_GPIO_Port);
+	if (MINUS){ value=LL_GPIO_ReadInputPort(MINUS_GPIO_Port);}
+	else if (PLUS){ value=LL_GPIO_ReadInputPort(PLUS_GPIO_Port);}
+	else if (UP){ value=LL_GPIO_ReadInputPort(UP_GPIO_Port);}
+	else if (DOWN) {value=LL_GPIO_ReadInputPort(DOWN_GPIO_Port);}
+	else if (RIGHT){ value=LL_GPIO_ReadInputPort(RIGHT_GPIO_Port);}
+	else if (LEFT) {value=LL_GPIO_ReadInputPort(LEFT_GPIO_Port);}
+	else if (TEST) {value=LL_GPIO_ReadInputPort(TEST_GPIO_Port);}
 
 	value=(((value>>2)&0x60) | ((value>>1)&0x1F));//drop unnecessary bits and rearrange to a row 8,7,5..1
-	myprintf (":%d:",value);
+
 	return (uint8_t) value;	//only return 8 bits, that's enough
 }
 /* USER CODE END 4 */

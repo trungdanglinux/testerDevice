@@ -113,9 +113,8 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef* adcHandle)
     PA4     ------> ADC1_IN4
     PA5     ------> ADC1_IN5
     PA6     ------> ADC1_IN6
-    PA7     ------> ADC1_IN7
     */
-    GPIO_InitStruct.Pin = AN_24V_Pin|AN_Vbat_Pin|AN_1V8A6_Pin|AN_RF_Pin;
+    GPIO_InitStruct.Pin = AN_24V_Pin|AN_VBAT_Pin|AN_1V8A6_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
@@ -163,9 +162,8 @@ void HAL_ADC_MspDeInit(ADC_HandleTypeDef* adcHandle)
     PA4     ------> ADC1_IN4
     PA5     ------> ADC1_IN5
     PA6     ------> ADC1_IN6
-    PA7     ------> ADC1_IN7
     */
-    HAL_GPIO_DeInit(GPIOA, AN_24V_Pin|AN_Vbat_Pin|AN_1V8A6_Pin|AN_RF_Pin);
+    HAL_GPIO_DeInit(GPIOA, AN_24V_Pin|AN_VBAT_Pin|AN_1V8A6_Pin);
 
   /* USER CODE BEGIN ADC1_MspDeInit 1 */
 
@@ -192,6 +190,31 @@ void HAL_ADC_MspDeInit(ADC_HandleTypeDef* adcHandle)
 }
 
 /* USER CODE BEGIN 1 */
+//Read chanel
+uint16_t adc_readChannel(int chan,ADC_HandleTypeDef hadc ) {
+    uint16_t adcVal;
+    ADC_ChannelConfTypeDef sConfig;
+    sConfig.Channel = chan;
+    sConfig.Rank = 1;
+    sConfig.SamplingTime = ADC_SAMPLETIME_3CYCLES;
+    if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK) {
+    	Error_Handler();
+    }
+    HAL_ADC_Start(&hadc);
+    while(HAL_ADC_PollForConversion(&hadc, 1000000) != HAL_OK){
+        HAL_Delay(10);
+    }
+    adcVal = HAL_ADC_GetValue(&hadc);
+
+    return adcVal ;
+}
+// get value from AN_24V
+uint_16 GetValue_24V(){
+	return adc_readChannel(ADC_CHANNEL_4,hadc1);
+}
+uint_16 GetValue_VBAT(){
+	return adc_readChannel(ADC_CHANNEL_5,hadc1);
+}
 
 /* USER CODE END 1 */
 

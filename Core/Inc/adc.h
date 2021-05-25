@@ -42,7 +42,9 @@ void MX_ADC1_Init(void);
 void MX_ADC3_Init(void);
 
 /* USER CODE BEGIN Prototypes */
-
+uint16_t adc_readChannel(int chan,ADC_HandleTypeDef hadc);
+uint_16 GetValue_24V();
+uint_16 GetValue_VBAT();
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus
