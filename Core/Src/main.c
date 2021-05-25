@@ -178,36 +178,7 @@ void substractValue(){   //Decrease each of three digits with the range from 0-9
 			  HAL_Delay(100);
 	}
 }
-//Print ADC signal
-void PrintADC(char * type){
-	typedef char * words;
-	uint8_t raw=0;
-	if (type == (words)"VIN" || type ==(words) "VBAT" || type ==(words)"VSOLAR"){
-		raw= adc_readChannel(ADC_CHANNEL_4,hadc1);
-		if (type == (words)"VBAT"){
-				raw= 2*raw;
-			if (raw > 3102){ //battery voltage is over 2.5V
-					HAL_GPIO_WritePin(EN_VIN_GPIO_Port,EN_VIN_Pin,GPIO_PIN_SET);
-					HAL_Delay(1500);
-				}
-			 if (raw > 5087 && raw < 5336){
-					HAL_GPIO_WritePin(EN_VIN_GPIO_Port,EN_VIN_Pin,GPIO_PIN_RESET);
-					HAL_Delay(1500);
-			}
-		}
 
-	}
-	else if (type == (words)"A1V8" || type == (words)"AN_3V3"){
-		HAL_ADC_Start(&hadc3);
-		HAL_ADC_PollForConversion(&hadc3, HAL_MAX_DELAY);
-		raw = HAL_ADC_GetValue(&hadc3);
-		if (type == (words)"A1V8" && raw > 2358 && raw < 2730){
-			HAL_GPIO_WritePin(GPIOE,EN_VSWITCHED_Pin,GPIO_PIN_RESET);
-			HAL_Delay(3000);
-		}
-	}
-	myprintf("%d ",raw);
-}
 /* Testing power management */
 //Testing Voltage Input
 
@@ -238,15 +209,19 @@ void Testing_VBAT(){
 	if (raw > 3102 ){//battery voltage is over 2.5V
 		LL_GPIO_SetOutputPin(EN_VIN_GPIO_Port, EN_VIN_Pin);
 		HAL_Delay(1500);
-	}else if (raw > 5087 && raw < 5336){ //battery voltage is from 4.1 -4.3V
+	}
+	if (raw > 5087 && raw < 5336){ //battery voltage is from 4.1 -4.3V
 		LL_GPIO_ResetOutputPin(EN_VIN_GPIO_Port, EN_VIN_Pin);
+		HAL_Delay(1500);
 	}
 }
 //Testing Switch
 void Testing_Switch(){
-	HAL_GPIO_WritePin(GPIOE,EN_VSWITCHED_Pin,GPIO_PIN_SET);
+	LL_GPIO_SetOutputPin(EN_VSWITCHED_GPIO_Port,EN_VSWITCHED_Pin);
 	HAL_Delay(3000);
-
+	raw=GetValue_1V8();
+	if (raw > 2358 && raw < 2730) myprintf("1V8 regular is OK with %d voltages in ADC",raw);
+	LL_GPIO_ResetOutputPin(EN_VSWITCHED_GPIO_Port,EN_VSWITCHED_Pin);
 }
 void Testing_3V3(){
 
@@ -287,7 +262,6 @@ int main(void)
   MX_TIM1_Init();
   MX_SPI5_Init();
   MX_I2C1_Init();
-  MX_ADC3_Init();
   MX_ADC1_Init();
   MX_USART6_UART_Init();
   MX_USART3_UART_Init();
@@ -560,9 +534,9 @@ int main(void)
 
 //	  Testing_3V3();
 //	  Testing_VIN();
-	  Testing_VSOLAR();
-//	   Testing_VBAT();
-	 // Testing_Switch();
+//	  Testing_VSOLAR();
+	   Testing_VBAT();
+//	  Testing_Switch();
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
