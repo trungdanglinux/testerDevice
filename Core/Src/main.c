@@ -86,6 +86,7 @@ Word digit3=(Word) digitID;
 char * Conf ="EU";
 char * mode ="Test&Program";
 uint16_t raw=0;
+uint16_t eepromValue=0X0000;
 int bufsize (char *buf)
 {
 	int i=0;
@@ -224,7 +225,66 @@ void Testing_Switch(){
 	LL_GPIO_ResetOutputPin(EN_VSWITCHED_GPIO_Port,EN_VSWITCHED_Pin);
 }
 void Testing_3V3(){
+	LL_GPIO_SetOutputPin(EN_3V3_GPIO_Port,EN_3V3_Pin);
+}
 
+void InitSD(){
+    LCD_Clear();
+    fresult = f_mount(&SDFatFS, "/", 1);
+    sprintf(buffer, "%d ",fresult);
+    	if (fresult != FR_OK)
+    	{
+    		sprintf(buffer, "MountError:%d",fresult);
+    		myprintf ("ERROR!!! in mounting SD CARD...(%d)\r\n",fresult);
+    	}
+    	else
+    	{
+    		sprintf(buffer, "Mount OK");
+    		myprintf("SD CARD mounted successfully...\r\n");
+    	}
+}
+void ReadAndWrite(){
+
+	fresult = f_open (&SDFile, "BST200.hex", FA_READ);
+	  	if(!fresult)
+	  	{
+	  		myprintf("Opened BST200.hex OK\r\n");
+	  		f_gets(buffer, 100, &SDFile);
+	  		if(!fresult)
+	  		{
+	  			myprintf("Read first line (length %d characters):\r\n",strlen(buffer));
+	  			myprintf("%s\r",buffer);
+	  			f_gets(buffer, 100, &SDFile);
+	  			myprintf("Read second line (length %d characters):\r\n",strlen(buffer));
+	  			myprintf("%s\r",buffer);
+	  			f_gets(buffer, 100, &SDFile);
+	  			myprintf("Read third line (length %d characters):\r\n",strlen(buffer));
+	  			myprintf("%s\r",buffer);
+	  		}
+	  		fresult=f_close(&SDFile);
+	  	}
+
+	  	uint8_t WriteState=WriteLine(buffer);
+	  	switch(WriteState){
+	  		case 0:
+	  			myprintf("It works successfully");
+	  			break;
+	  		case 1:
+	  			myprintf("Unable to start command!");
+	  			break;
+	  		case 2:
+	  			myprintf("Address Error!");
+	  			break;
+	  		case 3:
+	  			myprintf("No data!");
+	  			break;
+	  		case 4:
+	  			myprintf("Data Error!");
+	  			break;
+	  		default:
+	  			myprintf("Unexpected Error!");
+	  		    break;
+	  	}
 }
 /* USER CODE END 0 */
 
@@ -274,7 +334,8 @@ int main(void)
   init_LCD();
   myprintf ("\r\n\r\nzzzzzzzzzzzzzzzzzzzzzzzzzzzz\r\nBST200 Tester\r\n");
 
-
+  InitSD();
+  set_structure();
 
 #ifdef SD_SELFTEST
   LCD_Clear();
@@ -474,6 +535,7 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 
+
   while (1)
   {
 	  buttons=GetButtons();
@@ -490,20 +552,20 @@ int main(void)
 	  		case 122:		//Down
 	  			y=1;
 	  			break;
-	  		case 94:		//Left
+	  		case 95:		//Left
 	  			if(x) x--;
 	  			else x=0;
 	  			break;
-	  		case 126:	//Right
+	  		case 127:	//Right
 	  			if(x<14) x++;
 	  			else x=15;
 	  			break;
-	  		case 110:	//Plus
+	  		case 111:	//Plus
 	  			addValue();
 	  			SwitchRegion();
 	  			LL_GPIO_ResetOutputPin(GREEN_GPIO_Port, GREEN_Pin);
 	  			break;
-	  		case 118:	//Test
+	  		case 119:	//Test
 	  			break;
 	  		default:
 	  			break;
@@ -512,15 +574,11 @@ int main(void)
 	  LCD_cursorXY(x,y);
 	  HAL_Delay(300);
 
-
 	  char totalDigits[3]={digit1[0],digit2[0],digit3[0]};
-
-	  if (buttons == 118){
-
+	  if (buttons == 119){
 		 totalDigits[0]=digit1[6];
 		 totalDigits[1]=digit2[6];
 		 totalDigits[2]=digit3[6];
-
 		 LCD_cursorXY(3,0);
 		 LCD_digit((Word)totalDigits,3);
 		 LCD_cursorXY(12,0);
@@ -530,13 +588,38 @@ int main(void)
 		 x=3,y=0;
 		 HAL_Delay(400);
 	  }
+/******************************Testing Reading and Writing in EEprom via I2C***************************************/
+#ifdef EEprom in BST200
+	  uint8_t data[2]= {0x1A,0x34};
+      uint16_t address =0x11;
+      WriteEEprom(address,data,2);
+      uint8_t test= ReadEEprom(address,(uint8_t *)data);
+      myprintf("The value from EEprom:%X \r\n",test);
 
 
-//	  Testing_3V3();
-//	  Testing_VIN();
-//	  Testing_VSOLAR();
-	   Testing_VBAT();
-//	  Testing_Switch();
+/******************************Testing Reading and Writing to flash memory in BST200 vis bootloader SPI ***************************************/
+
+      //Need to enable 3,3 voltages, write protect and boot and connection.
+      Testing_3V3();
+      LL_GPIO_SetOutputPin(EN_BOOTS_GPIO_Port,EN_BOOTS_Pin);
+	  LL_GPIO_SetOutputPin(CONNECT_GPIO_Port,CONNECT_Pin);
+	  LL_GPIO_ResetOutputPin(PULL_RST_GPIO_Port,PULL_RST_Pin);
+	  LL_GPIO_SetOutputPin(PULL_WP_GPIO_Port,PULL_WP_Pin);
+	  LL_GPIO_SetOutputPin(CS_DUT_GPIO_Port,CS_DUT_Pin);
+	  HAL_Delay(1);
+	  LL_GPIO_ResetOutputPin(CS_DUT_GPIO_Port,CS_DUT_Pin); // set select chip low to w/r data via spi
+	  HAL_Delay(10);   // Essential to delay for a few milliseconds r/w data
+      ReadAndWrite();
+      LL_GPIO_SetOutputPin(CS_DUT_GPIO_Port,CS_DUT_Pin);
+
+/******************************Testing VIN, VSOLAR, VBAT and SWITCH ***************************************/
+
+	  Testing_VIN();
+	  Testing_VSOLAR();
+	  Testing_VBAT();
+	  Testing_Switch();
+
+#endif
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
