@@ -588,14 +588,26 @@ int main(void)
 		 x=3,y=0;
 		 HAL_Delay(400);
 	  }
+
+
+    /* USER CODE END WHILE */
+
+    /* USER CODE BEGIN 3 */
+  }
+  /* USER CODE END 3 */
+}
+
+/**
+  * @brief System Clock Configuration
+  * @retval None
+  */
+#ifdef Testing
 /******************************Testing Reading and Writing in EEprom via I2C***************************************/
-#ifdef EEprom in BST200
 	  uint8_t data[2]= {0x1A,0x34};
       uint16_t address =0x11;
       WriteEEprom(address,data,2);
       uint8_t test= ReadEEprom(address,(uint8_t *)data);
       myprintf("The value from EEprom:%X \r\n",test);
-
 
 /******************************Testing Reading and Writing to flash memory in BST200 vis bootloader SPI ***************************************/
 
@@ -613,24 +625,12 @@ int main(void)
       LL_GPIO_SetOutputPin(CS_DUT_GPIO_Port,CS_DUT_Pin);
 
 /******************************Testing VIN, VSOLAR, VBAT and SWITCH ***************************************/
-
 	  Testing_VIN();
 	  Testing_VSOLAR();
 	  Testing_VBAT();
 	  Testing_Switch();
 
 #endif
-    /* USER CODE END WHILE */
-
-    /* USER CODE BEGIN 3 */
-  }
-  /* USER CODE END 3 */
-}
-
-/**
-  * @brief System Clock Configuration
-  * @retval None
-  */
 void SystemClock_Config(void)
 {
   LL_FLASH_SetLatency(LL_FLASH_LATENCY_1);

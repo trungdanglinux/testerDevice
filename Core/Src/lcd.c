@@ -133,7 +133,6 @@ void set_structure(){
 		LCD_digit(scoutRegion,6);
 		LCD_cursorXY(0,1);
 		LCD_digit((unsigned char *)"M:",2);
-
 }
 
 void init_LCD()

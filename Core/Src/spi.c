@@ -21,24 +21,7 @@
 #include "spi.h"
 
 /* USER CODE BEGIN 0 */
-uint8_t SPI_Transfer(uint8_t data)
-{
-	uint8_t rxData;
-	HAL_SPI_TransmitReceive(&hspi5, &data, &rxData, 1, 50);
-	return rxData;
 
-	/*  LL method (not proven to work yet)
-    // Write data to be transmitted to the SPI data register
-    SPI1->DR = data;
-    // Wait until transmit complete
-    while (!(SPI1->SR & (SPI_SR_TXE)));
-    // Wait until receive complete
-    while (!(SPI1->SR & (SPI_SR_RXNE)));
-    // Wait until SPI is not busy anymore
-    while (SPI1->SR & (SPI_SR_BSY));
-    // Return received data from SPI data register
-    return SPI1->DR;*/
-}
 /* USER CODE END 0 */
 
 SPI_HandleTypeDef hspi5;
@@ -50,11 +33,11 @@ void MX_SPI5_Init(void)
   hspi5.Instance = SPI5;
   hspi5.Init.Mode = SPI_MODE_MASTER;
   hspi5.Init.Direction = SPI_DIRECTION_2LINES;
-  hspi5.Init.DataSize = SPI_DATASIZE_4BIT;
+  hspi5.Init.DataSize = SPI_DATASIZE_8BIT;
   hspi5.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi5.Init.CLKPhase = SPI_PHASE_1EDGE;
   hspi5.Init.NSS = SPI_NSS_SOFT;
-  hspi5.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_8;
+  hspi5.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_128;
   hspi5.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi5.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi5.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
@@ -124,7 +107,24 @@ void HAL_SPI_MspDeInit(SPI_HandleTypeDef* spiHandle)
 }
 
 /* USER CODE BEGIN 1 */
+uint8_t SPI_Transfer(uint8_t data)
+{
+	uint8_t rxData;
+	HAL_SPI_TransmitReceive(&hspi5, &data, &rxData, 1, 50);
+	return rxData;
 
+	/*  LL method (not proven to work yet)
+    // Write data to be transmitted to the SPI data register
+    SPI1->DR = data;
+    // Wait until transmit complete
+    while (!(SPI1->SR & (SPI_SR_TXE)));
+    // Wait until receive complete
+    while (!(SPI1->SR & (SPI_SR_RXNE)));
+    // Wait until SPI is not busy anymore
+    while (SPI1->SR & (SPI_SR_BSY));
+    // Return received data from SPI data register
+    return SPI1->DR;*/
+}
 /* USER CODE END 1 */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

@@ -68,10 +68,6 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define AN_1V8_Pin GPIO_PIN_3
-#define AN_1V8_GPIO_Port GPIOF
-#define AN_3V3_Pin GPIO_PIN_5
-#define AN_3V3_GPIO_Port GPIOF
 #define GREEN_Pin GPIO_PIN_0
 #define GREEN_GPIO_Port GPIOC
 #define MINUS_Pin GPIO_PIN_3
@@ -82,8 +78,8 @@ void Error_Handler(void);
 #define AN_24V_GPIO_Port GPIOA
 #define AN_VBAT_Pin GPIO_PIN_5
 #define AN_VBAT_GPIO_Port GPIOA
-#define AN_1V8A6_Pin GPIO_PIN_6
-#define AN_1V8A6_GPIO_Port GPIOA
+#define AN_1V8_Pin GPIO_PIN_6
+#define AN_1V8_GPIO_Port GPIOA
 #define EN_VSWITCHED_Pin GPIO_PIN_12
 #define EN_VSWITCHED_GPIO_Port GPIOF
 #define SCL_Pin GPIO_PIN_14
@@ -110,6 +106,8 @@ void Error_Handler(void);
 #define TX_GPIO_Port GPIOC
 #define RX_Pin GPIO_PIN_7
 #define RX_GPIO_Port GPIOC
+#define CONNECT_Pin GPIO_PIN_15
+#define CONNECT_GPIO_Port GPIOA
 #define TEST_Pin GPIO_PIN_4
 #define TEST_GPIO_Port GPIOD
 #define PLUS_Pin GPIO_PIN_5

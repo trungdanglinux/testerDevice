@@ -21,6 +21,8 @@
 #include "i2c.h"
 
 /* USER CODE BEGIN 0 */
+#include "usart.h"
+
 
 /* USER CODE END 0 */
 
@@ -114,7 +116,29 @@ void HAL_I2C_MspDeInit(I2C_HandleTypeDef* i2cHandle)
 }
 
 /* USER CODE BEGIN 1 */
-
+void WriteEEprom(uint16_t address,uint8_t *data,uint8_t DataNumber){
+	 myprintf("Writing in EEprom...");
+	 LL_GPIO_SetOutputPin(EN_3V3_GPIO_Port,EN_3V3_Pin);
+	 LL_GPIO_SetOutputPin(CONNECT_GPIO_Port,CONNECT_Pin);
+	 LL_GPIO_SetOutputPin(PULL_RST_GPIO_Port,PULL_RST_Pin);
+	 LL_GPIO_SetOutputPin(PULL_WP_GPIO_Port,PULL_WP_Pin);
+	 HAL_Delay(20); // Essential to delay for a few milliseconds r/w data
+	 if (HAL_I2C_Mem_Write(&hi2c1,AA08address,address,1,data,DataNumber,50) == HAL_OK) myprintf(" Writing from EEprom successfully \r\n") ;
+	 else myprintf("Writing Error from EEprom \r\n");
+	 HAL_Delay(50);
+}
+uint8_t ReadEEprom(uint16_t address){
+	  myprintf("Reading in EEprom...");
+	  uint8_t ReadData[1];
+	  LL_GPIO_SetOutputPin(EN_3V3_GPIO_Port,EN_3V3_Pin);
+	  LL_GPIO_SetOutputPin(CONNECT_GPIO_Port,CONNECT_Pin);
+	  LL_GPIO_SetOutputPin(PULL_RST_GPIO_Port,PULL_RST_Pin);
+	  LL_GPIO_SetOutputPin(PULL_WP_GPIO_Port,PULL_WP_Pin);
+	  HAL_Delay(20);   // Essential to delay for a few milliseconds r/w data
+	  if(HAL_I2C_Mem_Read(&hi2c1,AA08address,address,1,&ReadData[0],1,50) == HAL_OK) myprintf(" Reading from EEprom successfully \r\n");
+	  else myprintf("Reading Error from EEprom \r\n");
+	  return ReadData[0];
+}
 /* USER CODE END 1 */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

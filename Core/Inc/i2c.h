@@ -28,7 +28,9 @@ extern "C" {
 #include "main.h"
 
 /* USER CODE BEGIN Includes */
-
+#define AA08address (0xA0)
+void WriteEEprom(uint16_t address,uint8_t  *data,uint8_t DataNumber);
+uint8_t  ReadEEprom(uint16_t address);
 /* USER CODE END Includes */
 
 extern I2C_HandleTypeDef hi2c1;

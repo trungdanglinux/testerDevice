@@ -4,7 +4,7 @@
 
 
 void init_LCD();
-
+void set_structure();
 void LCD_write(unsigned char *text);
 void LCD_CursorOn(uint8_t ON);
 void LCD_Clear();

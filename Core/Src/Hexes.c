@@ -225,18 +225,19 @@ uint8_t WriteLine(char *hexes)
 {
 	uint8_t response=0;
 	uint8_t checksum=0;
-
+	LL_GPIO_ResetOutputPin(CS_DUT_GPIO_Port,CS_DUT_Pin);
 	SPI_Transfer(0x5A);	//Start
 	SPI_Transfer(0x31); //Write Memory
 	SPI_Transfer(0xCE); //
 	response=SPI_Transfer(0xFF);
+	myprintf(":::%02X:::\n",response);
 	if(response==0x79);	//ACK
 	else return 1;				//couldn't start command
 
 	SPI_Transfer(HI(ExtAdd)); //MSB
-	SPI_Transfer(LO(ExtAdd)); //
+	SPI_Transfer(LO(ExtAdd)); //LSB
 	SPI_Transfer(hexes[1]);   //
-	SPI_Transfer(hexes[2]);   //LSB
+	SPI_Transfer(hexes[2]);   //
 	checksum=HI(ExtAdd)^LO(ExtAdd)^hexes[1]^hexes[2];
 	SPI_Transfer(checksum);
 
@@ -256,6 +257,7 @@ uint8_t WriteLine(char *hexes)
 	delay_us(100);					//write delay
 
 	response=SPI_Transfer(0xFF);
+	LL_GPIO_SetOutputPin(CS_DUT_GPIO_Port,CS_DUT_Pin);
 	if(response==0x79);	//ACK
 	else return 4;				//data error
 
